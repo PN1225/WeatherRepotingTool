@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Reporting Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1em;
+            width: 60%;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #ff9a9e;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #fad0c4;
+        }
+
+        .weather-card {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 350px;
+        }
+
+        .weather-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .weather-card .icon {
+            font-size: 40px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 600px) {
+            input[type="text"] {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        #mic {
+            margin-top: 10px;
+            background: transparent;
+            font-size: 20px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 Weather Reporting Tool</h1>
+
+    <form method="POST">
+        <input type="text" id="city" name="city" placeholder="Enter city name..." required>
+        <button type="submit">Get Weather</button>
+        <button type="button" onclick="startListening()" id="mic">🎤 Speak</button>
+    </form>
+
+    {% if weather %}
+        <div class="weather-card">
+            <h2>Weather in {{ weather.city }}<br><small>as of {{ weather.time }}</small></h2>
+            <div class="icon">{{ weather.icon }}</div>
+            <p><strong>{{ weather.description }}</strong></p>
+            <p>🌡️ Temperature: {{ weather.temp }} °C</p>
+            <p>💧 Humidity: {{ weather.humidity }}%</p>
+        </div>
+    {% endif %}
+
+    <script>
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-IN';
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const city = event.results[0][0].transcript;
+                document.getElementById('city').value = city;
+            };
+
+            recognition.onerror = function(event) {
+                alert('Speech recognition error: ' + event.error);
+            };
+        }
+    </script>
+</body>
+</html>
